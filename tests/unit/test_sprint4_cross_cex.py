@@ -8,6 +8,10 @@ Covers:
   and cross-quote currency FX conversion & unreliable FX rejection).
 """
 from __future__ import annotations
+import sys as _sys, pathlib as _pathlib
+_src_dir = str(_pathlib.Path(__file__).resolve().parents[2] / "src")
+if _src_dir not in _sys.path:
+    _sys.path.insert(0, _src_dir)
 
 import asyncio
 import unittest

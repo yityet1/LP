@@ -6,6 +6,10 @@ Covers:
 - STRAT-002 & S1-010: Route A Binance Spot Triangle Arbitrage Scanner (precomputed closed loops, incremental vs full scan equivalence, positive/zero/negative net PnL filtering, halted symbol rejection, and exact match against independent ReferenceCostCalculator).
 """
 from __future__ import annotations
+import sys as _sys, pathlib as _pathlib
+_src_dir = str(_pathlib.Path(__file__).resolve().parents[2] / "src")
+if _src_dir not in _sys.path:
+    _sys.path.insert(0, _src_dir)
 
 import tempfile
 import unittest

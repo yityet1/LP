@@ -15,6 +15,10 @@ Verifies all S3 Equity-Linked Arbitrage acceptance gates (`S3-001` through `S3-0
   rejecting closed sessions, unapproved terms, corporate action freezes, or insufficient borrow locate.
 """
 from __future__ import annotations
+import sys as _sys, pathlib as _pathlib
+_src_dir = str(_pathlib.Path(__file__).resolve().parents[2] / "src")
+if _src_dir not in _sys.path:
+    _sys.path.insert(0, _src_dir)
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal

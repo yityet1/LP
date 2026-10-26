@@ -15,6 +15,10 @@ Verifies all S4-A CEX-DEX Arbitrage acceptance gates (`S4A-001` through `S4A-008
   leg failure, and locking output to `OpportunityDecision.PAPER`.
 """
 from __future__ import annotations
+import sys as _sys, pathlib as _pathlib
+_src_dir = str(_pathlib.Path(__file__).resolve().parents[2] / "src")
+if _src_dir not in _sys.path:
+    _sys.path.insert(0, _src_dir)
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
