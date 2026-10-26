@@ -1,0 +1,31 @@
+name: Arb Platform CI Gate
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  verify-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Secret leak guard (Block committed .env or private keys)
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$|\.pem$|\.key$'; then
+            echo "FATAL: Secret or .env file detected in git index!"
+            exit 1
+          fi
+
+      - name: Install package and run unit & contract tests
+        run: |
+          pip install -e .[dev]
+          pytest -v

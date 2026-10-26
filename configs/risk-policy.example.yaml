@@ -1,0 +1,86 @@
+# 多策略套利系统 — 全局与策略级风险政策基线 (META-002)
+policy_version: "1.0.0"
+effective_date: "2026-10-26T00:00:00Z"
+owner: "Gemini (Chief Engineer & Risk Lead)"
+
+global_gates:
+  live_trading_enabled: false          # 硬默认必须为 false，严禁在默认配置中开启
+  default_execution_mode: "paper"      # research_only | paper | live
+  fail_closed_on_unknown_state: true   # 风险网关或账本异常时立即阻断新增风险
+  persist_kill_switch_across_restarts: true
+
+notional_limits_usdt:
+  max_single_order_notional: "1000.00"
+  max_cycle_notional: "2000.00"
+  max_strategy_notional: "10000.00"
+  max_venue_notional: "15000.00"
+  max_portfolio_notional: "25000.00"
+
+loss_and_exposure_limits_usdt:
+  max_daily_realized_loss_strategy: "200.00"
+  max_daily_realized_loss_portfolio: "500.00"
+  max_unhedged_exposure_notional: "500.00"
+  max_unhedged_duration_ms: 5000
+
+market_data_health_gates:
+  max_book_age_ms: 500
+  max_cross_venue_skew_ms: 250
+  max_ws_queue_lag_ms: 100
+  halt_on_sequence_gap: true
+
+execution_and_reconciliation_gates:
+  min_net_edge_bps: "5.0"              # 扣除双边手续费与滑点后的最低净收益率门槛 (5 bps = 0.05%)
+  max_slippage_bps: "10.0"
+  max_unknown_orders_per_strategy: 1   # 出现 >=1 笔 UNKNOWN 订单立即暂停该策略开新仓
+  max_unreconciled_duration_seconds: 30
+  max_api_error_rate_per_minute: 5
+
+kill_switch_scopes:
+  strategy_level:
+    triggers:
+      - "unknown_order_count >= 1"
+      - "strategy_daily_loss >= max_daily_realized_loss_strategy"
+      - "unhedged_exposure_exceeded"
+    action: "HALT_STRATEGY_NEW_RISK_AND_ALERT_P0"
+  venue_level:
+    triggers:
+      - "venue_http_418_or_repeated_429"
+      - "venue_balance_reconciliation_mismatch"
+      - "venue_ws_disconnected_over_5s"
+    action: "HALT_VENUE_ALL_STRATEGIES_AND_ALERT_P0"
+  portfolio_level:
+    triggers:
+      - "portfolio_daily_loss >= max_daily_realized_loss_portfolio"
+      - "ledger_database_unavailable"
+      - "manual_emergency_kill"
+    action: "GLOBAL_KILL_SWITCH_LOCK_UNTIL_MANUAL_RESET"
+
+venue_capabilities:
+  binance_spot:
+    allowed_modes: ["research_only", "paper"]
+    live_approved: false
+    settlement_assets: ["USDT", "USDC", "BTC", "ETH", "BNB"]
+  binance_usdm:
+    allowed_modes: ["research_only", "paper"]
+    live_approved: false
+    settlement_assets: ["USDT", "USDC"]
+  okx_spot:
+    allowed_modes: ["research_only", "paper"]
+    live_approved: false
+    settlement_assets: ["USDT", "USDC", "BTC", "ETH"]
+  okx_swap:
+    allowed_modes: ["research_only", "paper"]
+    live_approved: false
+    settlement_assets: ["USDT", "USDC"]
+  equity_broker:
+    allowed_modes: ["research_only"]
+    live_approved: false
+  evm_dex:
+    allowed_modes: ["research_only"]
+    live_approved: false
+  crypto_options:
+    allowed_modes: ["research_only"]
+    live_approved: false
+  cross_chain_bridge:
+    allowed_modes: ["research_only"]
+    live_approved: false
