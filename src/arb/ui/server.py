@@ -3,13 +3,13 @@
 Launch via:
     python run_ui.py
 or:
-    PYTHONPATH=src python -m arb.ui.server --host 127.0.0.1 --port 8080
+    python -m arb.ui.server --host 127.0.0.1 --port 8080
 
 Provides:
 - `GET /`: Serves the interactive Quantitative Arbitrage Command Center Web UI (`static/index.html`)
 - `GET /api/status`: Returns real-time system health, portability audit, and latest real-data benchmark report
-- `POST /api/run-benchmark`: Re-runs `run_real_market_benchmark()` on the 2026-10-26 real market dataset and returns fresh results
-- `POST /api/live-market`: Connects to live Binance & OKX REST APIs (with optional proxy) to pull real-time L2 order books and evaluate arbitrage strategies
+- `POST /api/run-benchmark`: Re-runs `run_real_data_benchmark()` on the 2026-10-26 real market dataset and returns fresh results
+- `GET|POST /api/live-market`: Connects to live Binance & OKX REST APIs (with optional proxy) to pull real-time L2 order books and evaluate arbitrage strategies
 """
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ from typing import Any, Dict
 from urllib.parse import parse_qs, urlparse
 
 from arb.marketdata.live_feed import LiveMarketDataFeed
-from arb.portability import run_portability_check
-from arb.testing.real_data_runner import run_real_market_benchmark
+from arb.portability import model_to_json, run_portability_check
+from arb.testing.real_data_runner import run_real_data_benchmark
 
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -60,12 +60,12 @@ class ArbPlatformRequestHandler(BaseHTTPRequestHandler):
             if REPORT_PATH.exists():
                 report = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
             else:
-                report = run_real_market_benchmark()
+                report = run_real_data_benchmark()
             self._send_json(
                 200,
                 {
                     "status": "OK",
-                    "portability": run_portability_check(),
+                    "portability": json.loads(model_to_json(run_portability_check())),
                     "benchmark": report,
                 },
             )
@@ -84,12 +84,12 @@ class ArbPlatformRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
         if parsed.path == "/api/run-benchmark":
-            report = run_real_market_benchmark()
+            report = run_real_data_benchmark()
             self._send_json(
                 200,
                 {
                     "status": "RECOMPUTED",
-                    "portability": run_portability_check(),
+                    "portability": json.loads(model_to_json(run_portability_check())),
                     "benchmark": report,
                 },
             )
@@ -111,18 +111,22 @@ class ArbPlatformRequestHandler(BaseHTTPRequestHandler):
         self._send_json(404, {"error": f"Unknown POST endpoint {parsed.path}"})
 
 
+def create_ui_http_server(host: str = "127.0.0.1", port: int = 8080) -> HTTPServer:
+    return HTTPServer((host, port), ArbPlatformRequestHandler)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="ARB-PLATFORM Quantitative Arbitrage Command Center UI Server")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8080, help="Bind port (default: 8080)")
     args = parser.parse_args()
 
-    run_real_market_benchmark()
-    server = HTTPServer((args.host, args.port), ArbPlatformRequestHandler)
+    run_real_data_benchmark()
+    server = create_ui_http_server(args.host, args.port)
     print(f"ARB-PLATFORM UI Server running at http://{args.host}:{args.port}")
-    print("  - Interactive UI:       http://127.0.0.1:8080/")
-    print("  - Live Market API:      http://127.0.0.1:8080/api/live-market")
-    print("  - Real-Data Benchmark:  http://127.0.0.1:8080/api/status")
+    print(f"  - Interactive UI:       http://{args.host}:{args.port}/")
+    print(f"  - Live Market API:      http://{args.host}:{args.port}/api/live-market")
+    print(f"  - Real-Data Benchmark:  http://{args.host}:{args.port}/api/status")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

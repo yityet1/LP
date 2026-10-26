@@ -128,3 +128,29 @@ class TestLiveMarketDataConnector(unittest.TestCase):
         finally:
             server.shutdown()
             server.server_close()
+
+    def test_ui_http_server_status_and_index_endpoints(self) -> None:
+        """Verify run_ui.py / create_ui_http_server serves index.html and /api/status cleanly."""
+        import json
+        import threading
+        import urllib.request
+        from arb.ui import create_ui_http_server
+
+        server = create_ui_http_server("127.0.0.1", 0)
+        port = server.server_port
+        t = threading.Thread(target=server.serve_forever, daemon=True)
+        t.start()
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                body = resp.read().decode("utf-8")
+                self.assertIn("arb-platform", body.lower())
+
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/status", timeout=5) as resp:
+                self.assertEqual(resp.status, 200)
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(data["status"], "OK")
+                self.assertIn("checks", data["portability"])
+        finally:
+            server.shutdown()
+            server.server_close()

@@ -123,7 +123,7 @@ def _record_dummy_opportunity(ledger: LedgerStore, opportunity_id: str, strategy
 
 class TestSprint5ExecutionAndRisk(unittest.TestCase):
     def setUp(self) -> None:
-        self.repo_root = Path("/working_dir/c_8b6fc0dea8cfd9c3/arb-platform")
+        self.repo_root = Path(__file__).resolve().parents[2]
         self.settings = Settings.from_env(
             risk_policy_path=self.repo_root / "configs" / "risk-policy.example.yaml",
             env_override={"APP_ENV": "paper", "LIVE_TRADING_ENABLED": "false"},

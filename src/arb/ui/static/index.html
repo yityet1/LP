@@ -83,6 +83,9 @@
           <span id="headerKsDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span id="headerKsText">KILL-SWITCH: ARMED (0 HALTED)</span>
         </div>
+        <button id="btnLiveMarket" type="button" onclick="window.triggerLiveMarketFetch && window.triggerLiveMarketFetch()" class="px-3 py-1 rounded-md bg-emerald-500/25 hover:bg-emerald-500/40 border border-emerald-400/60 text-emerald-200 font-semibold transition cursor-pointer">
+          ⚡ 抓取实盘行情 (Binance/OKX)
+        </button>
         <button id="btnEmergencyKillAll" type="button" class="px-3 py-1 rounded-md bg-rose-600/25 hover:bg-rose-600/40 border border-rose-500/50 text-rose-200 font-semibold transition cursor-pointer">
           一键全局熔断 (Global Halt)
         </button>
@@ -125,6 +128,21 @@
     <!-- TAB 1: OVERVIEW & REAL MARKET DATA PULSE                              -->
     <!-- ===================================================================== -->
     <section id="tab-overview" class="tab-panel space-y-6">
+      <!-- LIVE CEX REAL-TIME FEED BANNER -->
+      <div id="liveMarketBanner" class="hidden glass-card rounded-xl p-4 border border-emerald-500/50 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs mono font-bold">LIVE CEX STREAM</span>
+            <h3 class="text-sm font-semibold text-white">Binance &amp; OKX 实时盘口深度与套利扫描结果 (`/api/live-market`)</h3>
+          </div>
+          <div class="flex items-center gap-2 text-xs mono">
+            <span id="liveMarketTimestamp" class="text-slate-400">--</span>
+            <button type="button" id="btnAutoLivePoll" onclick="window.toggleAutoLivePoll && window.toggleAutoLivePoll()" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">自动轮询(3s): OFF</button>
+          </div>
+        </div>
+        <div id="liveQuotesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs mono"></div>
+        <div id="liveScannerTableWrap" class="overflow-x-auto text-xs mono"></div>
+      </div>
       <!-- Top KPI Strip -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div class="glass-card rounded-xl p-3.5">
@@ -758,17 +776,17 @@
             <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
               <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span>方式 1：本地直接启动可视化 Web UI 终端与 REST API 服务 (`port 8080`)</span>
-                <button type="button" data-copy="PYTHONPATH=src python3 -m arb.ui.server --host 127.0.0.1 --port 8080" class="copy-cmd-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300 cursor-pointer">复制命令</button>
+                <button type="button" data-copy="python run_ui.py" class="copy-cmd-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300 cursor-pointer">复制命令</button>
               </div>
-              <div class="text-emerald-300 select-all">PYTHONPATH=src python3 -m arb.ui.server --host 127.0.0.1 --port 8080</div>
+              <div class="text-emerald-300 select-all">python run_ui.py</div>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
               <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span>方式 2：运行 2026-10-26 真实市场数据基准测试与全量 75 项回归测试</span>
-                <button type="button" data-copy="PYTHONPATH=src python3 -m unittest discover -s tests/unit -p &quot;test_*.py&quot; -v" class="copy-cmd-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300 cursor-pointer">复制命令</button>
+                <button type="button" data-copy="python run_tests.py" class="copy-cmd-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300 cursor-pointer">复制命令</button>
               </div>
-              <div class="text-cyan-300 select-all">PYTHONPATH=src python3 -m unittest discover -s tests/unit -p "test_*.py" -v</div>
+              <div class="text-cyan-300 select-all">python run_tests.py</div>
             </div>
 
             <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">

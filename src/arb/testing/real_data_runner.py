@@ -663,3 +663,14 @@ class RealDataBenchmarkRunner:
         report_out = root / "datasets" / "real_data_test_report.json"
         report_out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
         return report
+
+
+def run_real_data_benchmark() -> Dict[str, Any]:
+    return RealDataBenchmarkRunner().run_all()
+
+
+run_real_market_benchmark = run_real_data_benchmark
+
+
+if __name__ == "__main__":
+    print(json.dumps(run_real_data_benchmark(), indent=2, ensure_ascii=False))
