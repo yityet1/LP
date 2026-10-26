@@ -665,8 +665,14 @@ class RealDataBenchmarkRunner:
         return report
 
 
-def run_real_data_benchmark() -> Dict[str, Any]:
-    return RealDataBenchmarkRunner().run_all()
+    def run_all(self, repo_root: Path | str | None = None) -> Dict[str, Any]:
+        root = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[3]
+        return self.run_full_real_data_suite(root)
+
+
+def run_real_data_benchmark(repo_root: Path | str | None = None) -> Dict[str, Any]:
+    root = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[3]
+    return RealDataBenchmarkRunner.run_full_real_data_suite(root)
 
 
 run_real_market_benchmark = run_real_data_benchmark

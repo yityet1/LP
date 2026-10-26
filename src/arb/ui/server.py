@@ -16,14 +16,16 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import threading
+import webbrowser
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict
 from urllib.parse import parse_qs, urlparse
 
 from arb.marketdata.live_feed import LiveMarketDataFeed
 from arb.portability import model_to_json, run_portability_check
-from arb.testing.real_data_runner import run_real_data_benchmark
+from arb.testing.real_data_runner import run_real_data_benchmark, run_real_market_benchmark
 
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -111,22 +113,29 @@ class ArbPlatformRequestHandler(BaseHTTPRequestHandler):
         self._send_json(404, {"error": f"Unknown POST endpoint {parsed.path}"})
 
 
-def create_ui_http_server(host: str = "127.0.0.1", port: int = 8080) -> HTTPServer:
-    return HTTPServer((host, port), ArbPlatformRequestHandler)
+def create_ui_http_server(host: str = "127.0.0.1", port: int = 8080) -> ThreadingHTTPServer:
+    return ThreadingHTTPServer((host, port), ArbPlatformRequestHandler)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="ARB-PLATFORM Quantitative Arbitrage Command Center UI Server")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8080, help="Bind port (default: 8080)")
+    parser.add_argument("--no-browser", action="store_true", help="Do not auto-open browser on startup")
     args = parser.parse_args()
 
     run_real_data_benchmark()
     server = create_ui_http_server(args.host, args.port)
-    print(f"ARB-PLATFORM UI Server running at http://{args.host}:{args.port}")
-    print(f"  - Interactive UI:       http://{args.host}:{args.port}/")
-    print(f"  - Live Market API:      http://{args.host}:{args.port}/api/live-market")
-    print(f"  - Real-Data Benchmark:  http://{args.host}:{args.port}/api/status")
+    url = f"http://{args.host}:{args.port}"
+    print("=" * 72)
+    print(f"ARB-PLATFORM Quantitative Terminal UI Server is RUNNING!")
+    print(f"  -> Open in Browser:     {url}/")
+    print(f"  -> Live CEX Market API: {url}/api/live-market")
+    print(f"  -> Real-Data Benchmark: {url}/api/status")
+    print("  (Press Ctrl+C to stop the server)")
+    print("=" * 72)
+    if not args.no_browser:
+        threading.Timer(0.6, lambda: webbrowser.open(url)).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:

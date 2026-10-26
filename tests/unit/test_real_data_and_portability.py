@@ -15,7 +15,7 @@ from arb.portability import (
     normalize_sqlite_db_path,
     run_portability_check,
 )
-from arb.testing.real_data_runner import RealDataBenchmarkRunner
+from arb.testing.real_data_runner import RealDataBenchmarkRunner, run_real_data_benchmark, run_real_market_benchmark
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -39,7 +39,8 @@ class TestRealMarketDataAndPortability(unittest.TestCase):
 
     def test_real_market_data_20261026_end_to_end_benchmark(self) -> None:
         """Run all 8 scanners across 6 strategy families on real 2026-10-26 market data."""
-        report = RealDataBenchmarkRunner.run_full_real_data_suite(REPO_ROOT)
+        report = RealDataBenchmarkRunner().run_all(REPO_ROOT)
+        self.assertIn('strategies', run_real_data_benchmark())
         self.assertTrue(report["portability"]["overall_passed"])
         self.assertEqual(report["deterministic_replay"]["events_processed"], 15)
 
