@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REMOTE_URL="${1:-https://github.com/yityet1/LP.git}"
+if [ $# -lt 1 ]; then
+  echo "Usage: ./push_to_github.sh <GITHUB_REPO_URL> [BRANCH]"
+  echo "Example: ./push_to_github.sh https://github.com/your-username/arb-platform.git main"
+  exit 1
+fi
+
+REMOTE_URL="$1"
 BRANCH="${2:-main}"
 
 if git remote get-url origin >/dev/null 2>&1; then

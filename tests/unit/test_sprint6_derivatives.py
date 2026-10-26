@@ -306,7 +306,7 @@ class TestSprint6DerivativesAndS2Matrix(unittest.TestCase):
         self.assertGreater(rep.annualized_net_basis_bps, Decimal("500"))
 
     def test_deriv_003_and_004_funding_rate_carry_margin_monitor_and_paper_closed_loop(self) -> None:
-        now = datetime(2026, 10, 26, 5, 20, 0, tzinfo=timezone.utc)
+        now = datetime.now(timezone.utc)
         ledger = LedgerStore(":memory:")
         cfg_hash = ledger.record_config_version(self.settings)
         gateway = RiskGateway(self.settings, ledger)
