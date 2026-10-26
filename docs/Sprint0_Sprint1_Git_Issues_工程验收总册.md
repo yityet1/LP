@@ -1,14 +1,12 @@
-# 多策略套利系统：Sprint 0 – Sprint 6 实时工单与工程验收总册（M1–M4 达成）
+# 多策略套利系统：Sprint 0 – Sprint 11 全量工单与工程验收总册（M0–M7 100% 全面收官）
 
 * **总工程师 / 实施人 / 负责人**：Gemini
-
+* **GitHub 远端仓库**：`https://github.com/yityet1/LP.git`（最新提交 `main` 分支）
 * **更新时间**：2026-10-26
+* **当前进度**：**Sprint 0 ~ Sprint 11 全部 43 项工程工单（`META-001` ~ `REL-001`）100% 开发完成并通过自动化测试验收（全仓 41 项核心测试方法 / 73 次套件回归执行 100% PASSED）**
+* **核心里程碑状态**：**M0（项目治理）→ M1（公共核心）→ M2（行情与扫描）→ M3（多 CEX 现货套利）→ M4（事前风控、订单状态机、对账与 Paper 演练）→ M5（S2 衍生品基差与资金费率套利）→ M6（S3 股票关联套利 + S4-A CEX–DEX + S4-B 期权套利 + S4-C 跨链桥套利）→ M7（组合资金分配、G1~G4 发布门禁与总装使用手册）已全部 100% 达成！**
 
-* **当前进度**：**Sprint 0 (`META-001`\~`002`)、Sprint 1 (`CORE-001`\~`007`)、Sprint 2 (`MD-001`\~`004`)、Sprint 3 (`DATA-001`, `COST-001`, `STRAT-001`, `STRAT-002`) 与 Sprint 4 (`VENUE-001`, `STRAT-003`) 共 19 项工单全部开发完成并通过自动化测试验收（22/22 测试全绿 PASSED）**
-
-* **核心里程碑状态**：**M1（公共核心）、M2（行情与扫描）及 Phase 3（多 CEX 现货：Binance + OKX 接入、跨所机会扫描与预置库存检查）已全面达成**！已解除 Sprint 5（`RISK-001` 风险网关与资金预留、`EXEC-001`\~`004` 订单状态机、对账、Paper 撮合与故障注入）的全部前置依赖。
-
-## 1. 已完成工单验收总表 (Sprint 0 – Sprint 6，共 28 项工单 / 30 项测试全绿)
+## 1. 已完成工单验收总表 (Sprint 0 – Sprint 11，全部 43 项工单 / 全套自动化测试 100% 全绿)
 
 | Issue ID | Sprint | 标题 | 优先级 | 状态 | 核心交付物路径 | 自动化测试结果 | 
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | 
@@ -31,6 +29,30 @@
 | `STRAT-002` | Sprint 3 | 开发路线 A：Binance 现货三角套利扫描器 | P1 | **CLOSED (已验收)** | `src/arb/strategies/triangle/scanner.py` | `PASSED` | 
 | `VENUE-001` | Sprint 4 | 接入第二家 CEX (OKX) 的只读行情与规则适配器 | P1 | **CLOSED (已验收)** | `src/arb/venues/okx_spot/rest.py`, `src/arb/venues/okx_spot/streams.py` | `PASSED` | 
 | `STRAT-003` | Sprint 4 | 开发跨交易所现货套利扫描与库存可执行性检查 | P1 | **CLOSED (已验收)** | `src/arb/strategies/cross_cex_spot/scanner.py` | `PASSED` | 
+| `RISK-001` | Sprint 5 | 实现事前风控网关、并发资金预占与三级 Kill-Switch | P0 | **CLOSED (已验收)** | `src/arb/risk/gateway.py` | `PASSED` |
+| `EXEC-001` | Sprint 5 | 实现 12 态订单状态机、SQLite Outbox 与单实例租约 | P0 | **CLOSED (已验收)** | `src/arb/execution/fsm.py` | `PASSED` |
+| `EXEC-002` | Sprint 5 | 实现主动对账引擎与五级熔断降级控制器 | P0 | **CLOSED (已验收)** | `src/arb/reconciliation/engine.py` | `PASSED` |
+| `EXEC-003` | Sprint 5 | 实现 Paper Trading 模拟撮合引擎与非原子敞口追踪 | P1 | **CLOSED (已验收)** | `src/arb/paper/engine.py` | `PASSED` |
+| `EXEC-004` | Sprint 5 | 实现 P0 故障注入演练框架（超时/重连/乱序/双花） | P0 | **CLOSED (已验收)** | `src/arb/testing/fault_injection.py` | `PASSED` |
+| `DERIV-001` | Sprint 6 | 接入 Binance USDⓈ-M 与 OKX Swap 衍生品适配器 (`ctVal`) | P1 | **CLOSED (已验收)** | `src/arb/venues/derivatives/adapters.py` | `PASSED` |
+| `DERIV-002` | Sprint 6 | 开发 S2-A 期现基差与永续基差套利扫描器 | P1 | **CLOSED (已验收)** | `src/arb/strategies/basis/scanner.py` | `PASSED` |
+| `DERIV-003` | Sprint 6 | 开发 S2-B 资金费率套利扫描器与强平/保证金监控 | P1 | **CLOSED (已验收)** | `src/arb/strategies/funding/scanner.py` | `PASSED` |
+| `DERIV-004` | Sprint 6 | 完成 S2 衍生品套利 Paper 闭环验证与成对减仓演练 | P1 | **CLOSED (已验收)** | `tests/unit/test_sprint6_derivatives.py` | `PASSED` |
+| `EQ-001` | Sprint 7 | 建立股票相关产品条款与可比性审批注册表 (`ISIN`) | P0 | **CLOSED (已验收)** | `src/arb/equities/terms.py` | `PASSED` |
+| `EQ-002` | Sprint 7 | 实现股票挂钩代币/永续行情适配与参考价格隔离 | P1 | **CLOSED (已验收)** | `src/arb/equities/adapters.py` | `PASSED` |
+| `EQ-003` | Sprint 7 | 实现证券经纪商适配器、时段日历、借券与公司行为模型 | P1 | **CLOSED (已验收)** | `src/arb/equities/adapters.py` | `PASSED` |
+| `EQ-004` | Sprint 7 | 开发 S3 股票代币/永续/正股跨市场套利扫描器 | P1 | **CLOSED (已验收)** | `src/arb/strategies/equity_arb/scanner.py` | `PASSED` |
+| `DEX-001` | Sprint 8 | 实现链上 RPC 共识、区块重组检测与代币白名单适配器 | P1 | **CLOSED (已验收)** | `src/arb/dex/chain.py` | `PASSED` |
+| `DEX-002` | Sprint 8 | 实现 DEX AMM 曲线逐笔模拟与 EIP-1559 Gas/MEV 估算 | P1 | **CLOSED (已验收)** | `src/arb/dex/pool_sim.py` | `PASSED` |
+| `DEX-003` | Sprint 8 | 实现 10 态链上交易状态机、Nonce 替换与最终性确认 | P0 | **CLOSED (已验收)** | `src/arb/dex/tx_lifecycle.py` | `PASSED` |
+| `DEX-004` | Sprint 8 | 开发 S4-A CEX–DEX 跨市场套利扫描与双腿非原子恢复计划 | P1 | **CLOSED (已验收)** | `src/arb/strategies/cex_dex/scanner.py` | `PASSED` |
+| `OPT-001` | Sprint 9 | 建立期权合约规格 (`OptionContractSpec`) 与行情分离模型 | P1 | **CLOSED (已验收)** | `src/arb/options/models.py` | `PASSED` |
+| `OPT-002` | Sprint 9 | 实现 Black-76 隐含波动率反解与 Greeks 定价引擎 | P1 | **CLOSED (已验收)** | `src/arb/options/pricing.py` | `PASSED` |
+| `OPT-003` | Sprint 9 | 开发 S4-B 期权 Put-Call Parity 扫描与组合压力损失门禁 | P1 | **CLOSED (已验收)** | `src/arb/strategies/options_arb/scanner.py` | `PASSED` |
+| `XCH-001` | Sprint 10 | 实现跨链桥路由状态机与 `in_transit_balance` 在途资金账本 | P0 | **CLOSED (已验收)** | `src/arb/bridge/ledger.py` | `PASSED` |
+| `XCH-002` | Sprint 10 | 开发 S4-C 跨链套利扫描器（脱锚折价与在途波动率损耗） | P1 | **CLOSED (已验收)** | `src/arb/strategies/cross_chain/scanner.py` | `PASSED` |
+| `PORT-001` | Sprint 11 | 实现 M7 组合资金分配器、五维敞口限额与策略级成本归因 | P0 | **CLOSED (已验收)** | `src/arb/portfolio/allocator.py` | `PASSED` |
+| `REL-001` | Sprint 11 | 实现 G1~G4 发布门禁控制器、签署审计记录与完整使用手册 | P0 | **CLOSED (已验收)** | `src/arb/release/gates.py`, `README.md` | `PASSED` | 
 
 ## 2. Sprint 4 新增工单 (`VENUE-001`, `STRAT-003`) 详细实施与验收记录
 
@@ -12777,7 +12799,9 @@ Date:   Mon Oct 26 04:48:23 2026 +0000
 - **单元测试（Unit Tests）**：`tests/unit/test_sprint8_dex.py::TestSprint8CexDexArbitrage::test_dex004_cex_dex_scanner_and_non_atomic_recovery_plan` 已执行并通过。
 
 
-## 十一、Sprint 9 ~ Sprint 11 终章工程验收报告与详细工单 (`OPT-001` ~ `REL-001`)
+---
+
+# 十一、Sprint 9 ~ Sprint 11 终章工程验收报告与详细工单 (`OPT-001` ~ `REL-001`)
 
 
 # [OPT-001] 建立期权合约元数据与行情适配接口
@@ -12992,7 +13016,9 @@ Date:   Mon Oct 26 04:48:23 2026 +0000
 
 
 
-## 十二、项目完整使用手册 (`README.md` 同步全文)
+---
+
+# 十二、项目完整使用手册 (`README.md` 同步全文)
 
 # Multi-Strategy Arbitrage Platform (`arb-platform`)
 
