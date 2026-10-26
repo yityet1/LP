@@ -181,3 +181,54 @@ chmod +x push_to_github.sh
 ./push_to_github.sh
 ```
 即可将 `main` 分支上的全部代码、43 份验收工单与测试套件完整推送到 GitHub 仓库。
+
+---
+
+## 9. 跨平台代码可迁移性加固 (Cross-Platform Portability & Compatibility)
+
+为保证本仓库在不同操作系统（Linux / macOS / Windows WSL & Native / Docker 容器）以及不同 Python/Pydantic 版本环境下的零摩擦迁移，系统内置了 `src/arb/portability.py` 兼容层与自检探针：
+
+| 检查项 ID | 迁移性加固维度 | 解决的跨环境隐患 | 验证状态 |
+| :--- | :--- | :--- | :--- |
+| `PORT-ENV-01` | Python 运行时兼容 (`>=3.10`) | 统一 `Decimal` 高精度上下文与标准库依赖，零 C 扩展编译门槛 | `PASS` |
+| `PORT-PYD-02` | Pydantic v1 (`1.10.x`) / v2 (`2.x`) 双栈兼容 | 提供 `compat_root_validator`（自动适配 v1 `allow_reuse=True` 与 v2 `skip_on_failure=True`）及 `model_to_json(sort_keys=True)`（修复 Pydantic v2 移除 `.json(sort_keys=...)` 导致的报错） | `PASS` |
+| `PORT-SQL-03` | SQLite 跨平台 URI 与目录自愈 | `normalize_sqlite_db_path()` 兼容 POSIX `/path`、Windows 盘符 `C:/path` 与 `:memory:`，自动创建缺失的父级目录并开启 `WAL` 并发模式 | `PASS` |
+| `PORT-PATH-04` | 确定性归档路径哈希归一化 | `normalize_partition_key()` 将 Windows `\` 统一转换为 POSIX `/`，确保跨平台计算的 `dataset_version_id` (SHA-256) 100% 一致 | `PASS` |
+| `PORT-NUM-05` | 确定性 `Decimal` 金融精度不变量 | 严禁 `float` 参与净边际、资金费率与复式账本核销，跨架构 (`x86_64` / `arm64`) 零浮点漂移 | `PASS` |
+
+运行迁移性自检命令：
+```bash
+PYTHONPATH=src python3 -c "from arb.portability import run_portability_check; import json; print(json.dumps(run_portability_check(), indent=2))"
+```
+
+---
+
+## 10. 真实市场数据端到端测试 (Real Market Data Benchmark — 2026-10-26)
+
+仓库内置了采集自真实市场（2026-10-26 盘中快照）的基准数据集 `datasets/real_market_20261026.json`，涵盖 **BTC/USD** (`$79,438.75 ~ $80,432.40`)、**ETH/USD** (`$2,299.86 ~ $2,334.65`)、**BNB/USDT** (`$735.72`) 及 **NASDAQ: NVDA** (`ISIN: US67066G1040`, `$210.18 ~ $213.85`)：
+
+```bash
+# 运行真实市场数据端到端基准测试并生成 datasets/real_data_test_report.json
+PYTHONPATH=src python3 -m arb.testing.real_data_runner
+```
+
+---
+
+## 11. 完整 Web UI 量化终端与 Docker 部署 (Interactive Web UI & Docker)
+
+### 11.1 启动本地全栈 Web 管控终端
+```bash
+PYTHONPATH=src python3 -m arb.ui.server --host 127.0.0.1 --port 8080
+```
+启动后浏览器访问 `http://127.0.0.1:8080`，即可使用包含 **6 大工作台视图** 的交互式量化套利终端：
+1. **Command Center (总控驾驶舱)**：实时展示 2026-10-26 真实行情走势、8 大策略信号流与组合净值曲线；支持点击 **"Re-Run Real Data Benchmark"** 实时重跑底层引擎。
+2. **Strategy Matrix (6 大策略族)**：按分类筛选 S1~S6 策略，支持 **Interactive Spread Stress Simulator** 动态调节滑点与延迟预算。
+3. **M7 Capital & Risk (组合分配与风控)**：展示 M7 边际效用资金分配漏斗、场内敞口上限及 **Live Kill-Switch 演练开关**。
+4. **ACID Ledger & Recon (复式账本与对账)**：逐笔查阅真实行情触发的借贷平衡分录 (`SUM(debit) == SUM(credit)`)。
+5. **Portability & Replay (迁移性与确定性回放)**：实时查看 5 项跨平台迁移性探针状态与 SHA-256 回放指纹对比。
+6. **Sprint 0-11 Audit (43 项工程验收总览)**：支持按 Sprint 检索全部 43 项 Issue 的源码实现与单元测试映射。
+
+### 11.2 Docker 一键构建与运行
+```bash
+docker compose up --build
+```

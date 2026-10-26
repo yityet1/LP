@@ -13,6 +13,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from arb.config.settings import Settings
+from arb.portability import model_to_json, normalize_sqlite_db_path
 from arb.domain.models import (
     BalanceSnapshot,
     CycleState,
@@ -62,9 +63,7 @@ class LedgerStore:
     """
 
     def __init__(self, db_path: str = ":memory:") -> None:
-        if db_path.startswith("sqlite:///"):
-            db_path = db_path.replace("sqlite:///", "", 1)
-        self._db_path = db_path
+        self._db_path = normalize_sqlite_db_path(db_path)
         self._conn = sqlite3.connect(self._db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         self._conn.execute("PRAGMA foreign_keys = ON;")
@@ -135,7 +134,7 @@ class LedgerStore:
                     str(opp.net_edge_bps),
                     str(opp.capacity),
                     json.dumps(opp.reject_reason_codes),
-                    opp.json(),
+                    model_to_json(opp),
                     opp.event_time_utc.isoformat(),
                     opp.receive_time_utc.isoformat(),
                 ),
@@ -277,7 +276,7 @@ class LedgerStore:
                     event.status.value,
                     event.native_venue_status,
                     str(event.cumulative_filled_qty),
-                    event.json(),
+                    model_to_json(event),
                     event.event_time_utc.isoformat(),
                     event.receive_time_utc.isoformat(),
                 ),

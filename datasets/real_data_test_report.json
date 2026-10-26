@@ -1,0 +1,110 @@
+{
+  "dataset_id": "real_market_20261026_v1",
+  "evaluated_at_utc": "2026-10-26T14:30:00+00:00",
+  "portability": {
+    "overall_passed": true,
+    "python_version": "3.11.2",
+    "pydantic_version": "1.10.4",
+    "sqlite_version": "3.40.1",
+    "checks": [
+      {
+        "check_id": "PORT-ENV-01",
+        "category": "Python Runtime (>=3.10)",
+        "passed": true,
+        "environment_detail": "Python 3.11.2 (cpython)",
+        "remediation_applied": "Standard library asyncio, sqlite3, decimal, hashlib, unittest used with zero C-extension lock-in."
+      },
+      {
+        "check_id": "PORT-PYD-02",
+        "category": "Pydantic v1 / v2 Dual Compatibility",
+        "passed": true,
+        "environment_detail": "pydantic 1.10.4 (PYDANTIC_V2=False)",
+        "remediation_applied": "Implemented compat_root_validator(skip_on_failure=True) and model_to_json(sort_keys=True) shim."
+      },
+      {
+        "check_id": "PORT-FS-03",
+        "category": "POSIX / Windows / macOS Path & SQLite URI Normalization",
+        "passed": true,
+        "environment_detail": "os.name=posix, platform=Linux",
+        "remediation_applied": "Normalized sqlite:/// URIs across POSIX and Windows drive letters, auto-creating parent dirs."
+      },
+      {
+        "check_id": "PORT-DB-04",
+        "category": "SQLite3 ACID Transactions & Foreign Keys",
+        "passed": true,
+        "environment_detail": "SQLite 3.40.1 (PRAGMA foreign_keys=1)",
+        "remediation_applied": "Verified BEGIN IMMEDIATE transactions and foreign key enforcement."
+      },
+      {
+        "check_id": "PORT-NUM-05",
+        "category": "IEEE-754 Float Avoidance & Decimal/UTC Invariance",
+        "passed": true,
+        "environment_detail": "Decimal prec=28, tz=UTC",
+        "remediation_applied": "All prices, quantities, fees, and PnL use exact Decimal quantization (ROUND_DOWN/FLOOR/CEILING)."
+      }
+    ]
+  },
+  "deterministic_replay": {
+    "dataset_version_id": "ds_94a1944c7c0b2c6d",
+    "events_processed": 15,
+    "result_fingerprint": "5a55a58629f5ae81"
+  },
+  "strategies": {
+    "S1_triangle_binance": {
+      "evaluated_cycles": 2,
+      "executable_count": 1,
+      "top_net_edge_bps": "64.10",
+      "top_net_pnl_usdt": "6.4099"
+    },
+    "S1_cross_cex_spot": {
+      "buy_venue": "okx_spot",
+      "sell_venue": "binance_spot",
+      "buy_vwap_usdt": "80225.0",
+      "sell_vwap_usdt": "80430.00",
+      "net_edge_bps": "9.53",
+      "expected_net_pnl_usdt": "0.7648"
+    },
+    "S2A_spot_futures_basis": {
+      "spot_ask": "80432.40",
+      "deriv_bid": "81568.1",
+      "net_basis_bps": "115.06",
+      "annualized_net_basis_bps": "5999.46",
+      "net_delta_mismatch": "0.00"
+    },
+    "S2B_funding_rate_carry": {
+      "standardized_8h_bps": "8.45",
+      "expected_net_carry_usdt": "6.1684",
+      "break_even_settlements": "3.05"
+    },
+    "S3_nvda_equity_arb": {
+      "accepted": true,
+      "nasdaq_buy_vwap": "213.45",
+      "token_sell_vwap": "214.65",
+      "net_edge_bps": "36.22",
+      "expected_net_pnl_usd": "3.0924"
+    },
+    "S4A_cex_dex_uniswap": {
+      "accepted": true,
+      "direction": "BUY_CEX_SELL_DEX",
+      "net_edge_bps": "93.11",
+      "gas_cost_usd": "3.0388",
+      "expected_net_pnl_usd": "43.3610"
+    },
+    "S4B_btc_options_parity": {
+      "accepted": true,
+      "structure": "CONVERSION_BUY_CALL_SELL_PUT_SHORT_FWD",
+      "net_delta": "0.0000",
+      "expected_net_pnl_usd": "147.32"
+    },
+    "S4C_cross_chain_bridge": {
+      "accepted": true,
+      "risk_adjusted_net_edge_bps": "80.98",
+      "transit_volatility_haircut_usd": "4.8400",
+      "expected_net_pnl_usd": "28.2861"
+    }
+  },
+  "portfolio_allocation": {
+    "approved": true,
+    "allocated_notional_usd": "802.25"
+  }
+}

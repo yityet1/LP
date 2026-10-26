@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
-from pydantic import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field, validator
+from arb.portability import compat_root_validator, model_to_json
 
 
 class ConfigurationError(RuntimeError):
@@ -242,7 +243,7 @@ class Settings(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    @root_validator
+    @compat_root_validator
     def _enforce_live_trading_gate(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         app_env: AppEnvironment = values.get("app_env", AppEnvironment.PAPER)
         flags: FeatureFlags = values.get("feature_flags")
@@ -294,8 +295,8 @@ class Settings(BaseModel):
             "app_env": self.app_env.value,
             "log_level": self.log_level,
             "ledger_db_url": mask_sensitive_text(self.ledger_db_url),
-            "feature_flags": json.loads(self.feature_flags.json()),
-            "risk_policy": json.loads(self.risk_policy.json()),
+            "feature_flags": json.loads(model_to_json(self.feature_flags)),
+            "risk_policy": json.loads(model_to_json(self.risk_policy)),
             "credentials": {
                 k: {
                     "venue_id": v.venue_id,

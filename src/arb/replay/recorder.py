@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field, validator
 
 from arb.domain.models import PriceLevel, ensure_utc
 from arb.marketdata.orderbook import OrderBookBuilder
+from arb.portability import model_to_json, normalize_partition_key
 
 
 class ReplayIntegrityError(RuntimeError):
@@ -82,7 +83,7 @@ class MarketDataRecorder:
         self._memory_partitions: Dict[str, List[str]] = {}
 
     def _partition_rel_key(self, venue_id: str, date_str: str, instrument_id: str) -> str:
-        return f"venue={venue_id}/date={date_str}/symbol={instrument_id}"
+        return normalize_partition_key(venue_id, date_str, instrument_id)
 
     def _partition_file_path(self, venue_id: str, date_str: str, instrument_id: str) -> Path:
         part_dir = (
@@ -98,7 +99,7 @@ class MarketDataRecorder:
         date_str = event.event_time_utc.strftime("%Y-%m-%d")
         rel_key = self._partition_rel_key(event.venue_id, date_str, event.instrument_id)
         file_path = self._partition_file_path(event.venue_id, date_str, event.instrument_id)
-        line = event.json()
+        line = model_to_json(event, sort_keys=False)
         with file_path.open("a", encoding="utf-8") as f:
             f.write(line + "\n")
         self._memory_partitions.setdefault(rel_key, []).append(line)
@@ -190,7 +191,7 @@ class MarketDataRecorder:
 
         hasher = hashlib.sha256()
         for ev in all_events:
-            hasher.update(ev.json(sort_keys=True).encode("utf-8"))
+            hasher.update(model_to_json(ev, sort_keys=True).encode("utf-8"))
         dataset_version_id = f"ds_{hasher.hexdigest()[:16]}"
 
         manifest = DatasetManifest(

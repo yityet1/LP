@@ -1,0 +1,162 @@
+{
+  "dataset_id": "real_market_20261026_v1",
+  "captured_at_utc": "2026-10-26T12:30:00Z",
+  "sources": [
+    {
+      "name": "Google Finance Real-Time Crypto & Equity Feed",
+      "assets": ["BTC/USD", "ETH/USD", "NASDAQ:NVDA"],
+      "url": "https://www.google.com/finance/"
+    },
+    {
+      "name": "OKX V5 Spot & Perpetual Swap Live Snapshot",
+      "assets": ["BTC-USDT", "BTC-USDT-SWAP"],
+      "url": "https://www.okx.com/trade-swap/btc-usdt-swap"
+    },
+    {
+      "name": "Binance Spot & USD-M Perpetual Market Snapshot",
+      "assets": ["BTCUSDT", "ETHUSDT", "BNBUSDT"],
+      "url": "https://coinmarketcap.com/exchanges/binance/"
+    },
+    {
+      "name": "NASDAQ Official Quote (NVIDIA Corp ISIN US67066G1040)",
+      "assets": ["NVDA"],
+      "url": "https://www.nasdaq.com/market-activity/stocks/nvda"
+    }
+  ],
+  "spot_and_perp_quotes": {
+    "binance_spot": {
+      "BTC-USDT": {
+        "bids": [["80430.00", "1.4500"], ["80425.00", "2.8000"], ["80415.00", "5.0000"]],
+        "asks": [["80432.40", "1.2500"], ["80438.00", "2.6000"], ["80445.00", "4.5000"]],
+        "last_update_id": 20261026101
+      },
+      "ETH-USDT": {
+        "bids": [["2328.40", "18.500"], ["2327.80", "35.000"], ["2326.50", "60.000"]],
+        "asks": [["2328.59", "16.200"], ["2329.20", "30.000"], ["2330.00", "50.000"]],
+        "last_update_id": 20261026102
+      },
+      "ETH-BTC": {
+        "bids": [["0.02915", "20.000"], ["0.02912", "40.000"]],
+        "asks": [["0.02917", "18.000"], ["0.02919", "35.000"]],
+        "last_update_id": 20261026103
+      },
+      "BNB-USDT": {
+        "bids": [["735.50", "45.00"], ["735.10", "80.00"]],
+        "asks": [["735.72", "40.00"], ["736.10", "75.00"]],
+        "last_update_id": 20261026104
+      }
+    },
+    "okx_spot": {
+      "BTC-USDT": {
+        "bids": [["80222.0", "1.1000"], ["80215.0", "2.4000"], ["80205.0", "4.0000"]],
+        "asks": [["80225.0", "1.3000"], ["80232.0", "2.5000"], ["80240.0", "4.2000"]],
+        "last_update_id": 992026101
+      },
+      "ETH-USDT": {
+        "bids": [["2334.40", "15.000"], ["2333.80", "28.000"]],
+        "asks": [["2334.65", "14.500"], ["2335.20", "25.000"]],
+        "last_update_id": 992026102
+      }
+    },
+    "okx_swap": {
+      "BTC-USDT-PERP": {
+        "bids": [["81568.1", "250"], ["81560.0", "500"]],
+        "asks": [["81572.0", "250"], ["81580.0", "500"]],
+        "mark_price": "81569.5",
+        "index_price": "80432.4",
+        "funding_rate_8h": "0.000845",
+        "contract_multiplier": "0.01",
+        "last_update_id": 882026101
+      }
+    }
+  },
+  "intraday_series_20261026": {
+    "BTC_USD": [
+      {"ts": "2026-10-26T00:00:00Z", "price": 80064.33},
+      {"ts": "2026-10-26T01:50:00Z", "price": 79501.80},
+      {"ts": "2026-10-26T02:35:00Z", "price": 79455.38},
+      {"ts": "2026-10-26T03:50:00Z", "price": 79438.75},
+      {"ts": "2026-10-26T04:35:00Z", "price": 79984.15},
+      {"ts": "2026-10-26T05:40:00Z", "price": 80092.17},
+      {"ts": "2026-10-26T06:40:00Z", "price": 79911.88},
+      {"ts": "2026-10-26T08:15:00Z", "price": 79648.93},
+      {"ts": "2026-10-26T08:45:00Z", "price": 80189.88},
+      {"ts": "2026-10-26T09:30:00Z", "price": 80412.00},
+      {"ts": "2026-10-26T09:45:00Z", "price": 80425.21},
+      {"ts": "2026-10-26T10:45:00Z", "price": 80319.23},
+      {"ts": "2026-10-26T11:35:00Z", "price": 80228.48},
+      {"ts": "2026-10-26T12:20:00Z", "price": 80190.61},
+      {"ts": "2026-10-26T12:30:00Z", "price": 80432.40}
+    ],
+    "ETH_USD": [
+      {"ts": "2026-10-26T00:00:00Z", "price": 2327.02},
+      {"ts": "2026-10-26T01:50:00Z", "price": 2308.01},
+      {"ts": "2026-10-26T02:50:00Z", "price": 2299.86},
+      {"ts": "2026-10-26T03:50:00Z", "price": 2300.21},
+      {"ts": "2026-10-26T04:55:00Z", "price": 2318.65},
+      {"ts": "2026-10-26T05:40:00Z", "price": 2321.64},
+      {"ts": "2026-10-26T06:40:00Z", "price": 2312.83},
+      {"ts": "2026-10-26T08:15:00Z", "price": 2302.14},
+      {"ts": "2026-10-26T08:45:00Z", "price": 2327.37},
+      {"ts": "2026-10-26T09:45:00Z", "price": 2331.48},
+      {"ts": "2026-10-26T10:00:00Z", "price": 2334.65},
+      {"ts": "2026-10-26T10:45:00Z", "price": 2327.23},
+      {"ts": "2026-10-26T11:35:00Z", "price": 2326.10},
+      {"ts": "2026-10-26T12:20:00Z", "price": 2326.99},
+      {"ts": "2026-10-26T12:30:00Z", "price": 2328.59}
+    ],
+    "NVDA_USD": [
+      {"ts": "2026-10-23T13:30:00Z", "price": 211.11},
+      {"ts": "2026-10-23T14:45:00Z", "price": 213.46},
+      {"ts": "2026-10-23T16:05:00Z", "price": 212.87},
+      {"ts": "2026-10-23T17:30:00Z", "price": 211.63},
+      {"ts": "2026-10-23T19:55:00Z", "price": 211.01},
+      {"ts": "2026-10-26T08:20:00Z", "price": 210.64},
+      {"ts": "2026-10-26T09:30:00Z", "price": 211.91},
+      {"ts": "2026-10-26T11:10:00Z", "price": 211.06},
+      {"ts": "2026-10-26T12:00:00Z", "price": 213.08},
+      {"ts": "2026-10-26T12:15:00Z", "price": 213.87},
+      {"ts": "2026-10-26T12:30:00Z", "price": 213.45}
+    ]
+  },
+  "equity_nvda_20261026": {
+    "ticker": "NVDA",
+    "isin": "US67066G1040",
+    "nasdaq_bid": "213.40",
+    "nasdaq_ask": "213.45",
+    "tokenized_bid": "214.65",
+    "tokenized_ask": "214.75",
+    "mark_price": "214.70",
+    "index_reference_price": "213.45",
+    "borrow_locate_shares": "5000",
+    "annualized_borrow_rate_bps": "45.0"
+  },
+  "dex_uniswap_weth_usdc_20261026": {
+    "chain_id": 1,
+    "pool_address": "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
+    "reserve_weth": "12500.0",
+    "reserve_usdc": "29375000.0",
+    "fee_bps": "5",
+    "base_fee_gwei": "12",
+    "priority_fee_gwei": "2",
+    "block_number": 21045800
+  },
+  "options_btc_20261127_80000": {
+    "underlying_spot": "80432.40",
+    "strike": "80000.00",
+    "expiry_utc": "2026-11-27T08:00:00Z",
+    "call_bid": "3180.00",
+    "call_ask": "3210.00",
+    "put_bid": "2420.00",
+    "put_ask": "2440.00",
+    "risk_free_rate": "0.045"
+  },
+  "cross_chain_weth_arb_opt": {
+    "source_chain_id": 42161,
+    "dest_chain_id": 10,
+    "source_dex_ask_usd": "2328.59",
+    "dest_dex_bid_usd": "2344.80",
+    "estimated_transit_seconds": 180,
+    "bridge_fee_usd": "1.20"
+  }
+}

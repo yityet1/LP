@@ -7,7 +7,8 @@ from enum import Enum
 from typing import Dict, List, Optional, Tuple
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field, validator
+from arb.portability import compat_root_validator, model_to_json
 
 
 def ensure_utc(dt: datetime) -> datetime:
@@ -218,7 +219,7 @@ class Instrument(DomainEventBase):
             raise ValueError(f"Instrument specification must be > 0, got {v}")
         return v
 
-    @root_validator
+    @compat_root_validator
     def _validate_option_fields(cls, values: Dict) -> Dict:
         inst_type = values.get("instrument_type")
         if inst_type == InstrumentType.OPTION:
@@ -236,7 +237,7 @@ class OrderBook(DomainEventBase):
     is_valid: bool = True
     invalid_reason: Optional[str] = None
 
-    @root_validator
+    @compat_root_validator
     def _validate_book_integrity(cls, values: Dict) -> Dict:
         bids: List[PriceLevel] = values.get("bids", [])
         asks: List[PriceLevel] = values.get("asks", [])
@@ -438,7 +439,7 @@ class BalanceSnapshot(DomainEventBase):
     reserved_balance: Decimal = Decimal("0")
     in_transit_balance: Decimal = Decimal("0")
 
-    @root_validator
+    @compat_root_validator
     def _validate_balance_components(cls, values: Dict) -> Dict:
         total = values.get("total_balance", Decimal("0"))
         free = values.get("free_balance", Decimal("0"))
